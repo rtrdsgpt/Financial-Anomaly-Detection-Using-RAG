@@ -342,3 +342,16 @@ class AIExplainerFactory:
             return AIExplainerFactory.create_openai_explainer(api_key, model)
         else:
             raise ValueError(f"Unknown AI service: {service}")
+
+    @staticmethod
+    def create_grounded_explainer(api_key: str, retriever, model: str = 'meta-llama/llama-4-scout-17b-16e-instruct',
+                                   top_k_sources: int = 5) -> AIExplainer:
+        """Create a retrieval-grounded, citation-verified AI explainer.
+
+        `retriever` is a `processors.rag_retriever.RAGRetriever`, imported
+        lazily here to avoid a hard import-time dependency on the RAG stack
+        for callers that only need the plain Groq/OpenAI strategies.
+        """
+        from processors.grounded_explainer import GroundedGroqExplanationStrategy
+        strategy = GroundedGroqExplanationStrategy(api_key, retriever, model=model, top_k_sources=top_k_sources)
+        return AIExplainer(strategy)

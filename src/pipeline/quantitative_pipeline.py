@@ -18,6 +18,11 @@ from processors.news_retriever import NewsRetriever, NewsRetrieverFactory
 from processors.embedding_generator import EmbeddingGenerator, EmbeddingGeneratorFactory
 from processors.similarity_analyzer import SimilarityAnalyzer, FAISSStrategy, CosineSimilarityStrategy
 from processors.ai_explainer import AIExplainer, AIExplainerFactory
+from processors.chunking import ChunkerFactory
+from processors.vector_store import VectorStoreFactory
+from processors.reranker import RerankerFactory
+from processors.rag_retriever import RAGRetriever
+from processors.grounded_explainer import GroundedGroqExplanationStrategy
 
 class QuantitativeAnalysisPipeline(BaseAnalysisPipeline):
     """Main quantitative analysis pipeline with Template Method pattern"""
@@ -77,13 +82,62 @@ class QuantitativeAnalysisPipeline(BaseAnalysisPipeline):
                 self.ai_explainer = AIExplainerFactory.create_explainer(ai_service, ai_api_key, **ai_config)
             else:
                 self.ai_explainer = None
-            
+
+            # RAG upgrade: chunking + document-carrying vector store + reranker
+            # composed into a RAGRetriever, and (if an AI key is configured)
+            # swap in the citation-grounded explainer. The legacy whole-event
+            # FAISS + plain explainer path above stays reachable via
+            # config['use_rag'] = False, so the two can be A/B'd for the eval
+            # harness.
+            self.use_rag = self.config.get('use_rag', True)
+            self.rag_retriever = None
+            if self.use_rag:
+                self.chunker = ChunkerFactory.create_chunker(self.config.get('chunking_strategy', 'headline'))
+
+                vector_store_backend = self.config.get('vector_store_backend', 'chroma')
+                if vector_store_backend == 'chroma':
+                    try:
+                        import chromadb  # noqa: F401
+                        self.rag_vector_store = VectorStoreFactory.create('chroma')
+                    except ImportError:
+                        self.logger.warning(
+                            "chromadb not installed; falling back to the pure-numpy vector store for RAG retrieval"
+                        )
+                        self.rag_vector_store = VectorStoreFactory.create('numpy')
+                else:
+                    self.rag_vector_store = VectorStoreFactory.create(vector_store_backend)
+
+                if self.config.get('use_reranker', True):
+                    self.reranker = RerankerFactory.create_reranker('cross_encoder')
+                    if not self.reranker.is_available():
+                        self.logger.warning("Cross-encoder reranker unavailable; falling back to no-op reranker")
+                        self.reranker = RerankerFactory.create_reranker('none')
+                else:
+                    self.reranker = RerankerFactory.create_reranker('none')
+
+                self.rag_retriever = RAGRetriever(
+                    chunker=self.chunker,
+                    embedding_generator=self.embedding_generator,
+                    vector_store=self.rag_vector_store,
+                    reranker=self.reranker,
+                    min_relevance_score=self.config.get('rag_min_relevance_score', 0.0),
+                    max_retries=self.config.get('rag_max_retries', 2),
+                )
+
+                if ai_api_key and self.config.get('use_grounded_citations', True):
+                    self.ai_explainer = AIExplainerFactory.create_grounded_explainer(
+                        ai_api_key, self.rag_retriever, model=ai_config.get('model', 'meta-llama/llama-4-scout-17b-16e-instruct')
+                    )
+
             # Add observers to components
-            for component in [self.data_loader, self.anomaly_detector, self.news_retriever, 
-                            self.embedding_generator, self.similarity_analyzer]:
+            components = [self.data_loader, self.anomaly_detector, self.news_retriever,
+                          self.embedding_generator, self.similarity_analyzer]
+            if self.rag_retriever:
+                components.append(self.rag_retriever)
+            for component in components:
                 for observer in self._observers:
                     component.add_observer(observer)
-            
+
             if self.ai_explainer:
                 for observer in self._observers:
                     self.ai_explainer.add_observer(observer)
@@ -158,48 +212,118 @@ class QuantitativeAnalysisPipeline(BaseAnalysisPipeline):
                 events_with_news = events.copy()
                 events_with_news['News_Headlines'] = ''
             
-            self.notify_progress("analysis", 50.0, "Generating embeddings")
-            
-            # Embedding generation
-            events_with_embeddings = self.embedding_generator.add_embeddings_to_events(events_with_news)
-            
-            self._results['events_with_embeddings'] = events_with_embeddings
-            
-            self.notify_progress("analysis", 70.0, "Creating similarity index")
-            
-            # Similarity analysis
-            embeddings = np.array([event['Embedding'] for _, event in events_with_embeddings.iterrows()])
-            index = self.similarity_analyzer.create_index(embeddings)
-            similarity_analysis = self.similarity_analyzer.analyze_similarity_patterns(events_with_embeddings, index)
-            
-            self._results['faiss_index'] = index
-            self._results['similarity_analysis'] = similarity_analysis
-            
-            self.notify_progress("analysis", 90.0, "Generating AI explanations")
-            
-            # AI explanations
-            if self.ai_explainer and self.ai_explainer.is_available():
-                latest_explanation = self.ai_explainer.explain_latest_event(
-                    events_with_embeddings, self.similarity_analyzer, index
-                )
-                
-                recent_indices = list(range(max(0, len(events_with_embeddings) - 3), len(events_with_embeddings)))
-                multiple_explanations = self.ai_explainer.explain_multiple_events(
-                    events_with_embeddings, self.similarity_analyzer, index, recent_indices
-                )
-                
-                self._results['latest_explanation'] = latest_explanation
-                self._results['multiple_explanations'] = multiple_explanations
+            if self.use_rag and self.rag_retriever is not None:
+                self._analyze_rag(events_with_news)
             else:
-                self.logger.warning("AI explainer not available, skipping explanations")
-            
+                self._analyze_legacy(events_with_news)
+
             self.notify_progress("analysis", 100.0, "Analysis completed")
             self.logger.info("Analysis phase completed successfully")
-            
+
         except Exception as e:
             self.logger.error(f"Analysis failed: {e}")
             self.notify_error(e, "analysis")
             raise AnalysisError(f"Analysis failed: {e}")
+
+    def _analyze_legacy(self, events_with_news: pd.DataFrame) -> None:
+        """Original whole-event path: embed each event as one vector, index
+        with FAISS, explain via nearest-neighbor similar events. Kept
+        reachable via config['use_rag'] = False so it can be A/B'd against
+        the RAG path in the eval harness."""
+        self.notify_progress("analysis", 50.0, "Generating embeddings")
+
+        events_with_embeddings = self.embedding_generator.add_embeddings_to_events(events_with_news)
+        self._results['events_with_embeddings'] = events_with_embeddings
+
+        self.notify_progress("analysis", 70.0, "Creating similarity index")
+
+        embeddings = np.array([event['Embedding'] for _, event in events_with_embeddings.iterrows()])
+        index = self.similarity_analyzer.create_index(embeddings)
+        similarity_analysis = self.similarity_analyzer.analyze_similarity_patterns(events_with_embeddings, index)
+
+        self._results['faiss_index'] = index
+        self._results['similarity_analysis'] = similarity_analysis
+
+        self.notify_progress("analysis", 90.0, "Generating AI explanations")
+
+        if self.ai_explainer and self.ai_explainer.is_available():
+            latest_explanation = self.ai_explainer.explain_latest_event(
+                events_with_embeddings, self.similarity_analyzer, index
+            )
+
+            recent_indices = list(range(max(0, len(events_with_embeddings) - 3), len(events_with_embeddings)))
+            multiple_explanations = self.ai_explainer.explain_multiple_events(
+                events_with_embeddings, self.similarity_analyzer, index, recent_indices
+            )
+
+            self._results['latest_explanation'] = latest_explanation
+            self._results['multiple_explanations'] = multiple_explanations
+        else:
+            self.logger.warning("AI explainer not available, skipping explanations")
+
+    def _analyze_rag(self, events_with_news: pd.DataFrame) -> None:
+        """RAG path: no whole-event embedding/FAISS step. Each explained
+        event's news text is chunked, indexed, retrieved, and (if a
+        grounded explainer is configured) cited against, via
+        `self.rag_retriever` / `self.ai_explainer`."""
+        self.notify_progress("analysis", 60.0, "Indexing historical event chunks for retrieval")
+
+        recent_indices = list(range(max(0, len(events_with_news) - 3), len(events_with_news)))
+
+        self.notify_progress("analysis", 90.0, "Generating grounded AI explanations")
+
+        if self.ai_explainer and self.ai_explainer.is_available():
+            explanations = self._explain_events_rag(events_with_news, recent_indices)
+            self._results['multiple_explanations'] = explanations
+            if recent_indices:
+                self._results['latest_explanation'] = explanations.get(recent_indices[-1], '')
+        else:
+            self.logger.warning("AI explainer not available, skipping explanations")
+
+    def _explain_events_rag(self, events_with_news: pd.DataFrame, event_positions: List[int]) -> Dict[int, str]:
+        """Explain each event at the given positions, using the rest of
+        `events_with_news` as the retrieval corpus (self-excluded so an
+        event never cites its own news as a historical precedent)."""
+        explanations: Dict[int, str] = {}
+        is_grounded = isinstance(getattr(self.ai_explainer, 'strategy', None), GroundedGroqExplanationStrategy)
+
+        for position in event_positions:
+            if not (0 <= position < len(events_with_news)):
+                continue
+
+            event_data = events_with_news.iloc[position].to_dict()
+            history = events_with_news.drop(events_with_news.index[position])
+
+            if is_grounded:
+                # The grounded strategy runs its own retrieval over the
+                # full history pool it's handed.
+                similar_events = history.to_dict('records')
+            else:
+                query_text = f"{event_data.get('Event_Type', '')} {event_data.get('News_Headlines', '')}"
+                similar_events = self._select_rag_context_events(query_text, history)
+
+            explanations[position] = self.ai_explainer.explain_event(event_data, similar_events)
+
+        return explanations
+
+    def _select_rag_context_events(self, query_text: str, history: pd.DataFrame,
+                                    top_n: int = 10, top_k: int = 5) -> List[Dict[str, Any]]:
+        """Non-grounded RAG mode: narrow `history` down to the events behind
+        the top retrieved chunks, deduplicated, so the plain explainer still
+        benefits from retrieval-quality context selection even without
+        structured citations."""
+        result = self.rag_retriever.retrieve(query_text, history, top_n=top_n, top_k=top_k)
+
+        seen = set()
+        context_events = []
+        for ranked in result.candidates:
+            event_index = ranked.chunk.metadata.get('event_index')
+            if event_index in seen or event_index not in history.index:
+                continue
+            seen.add(event_index)
+            context_events.append(history.loc[event_index].to_dict())
+
+        return context_events
     
     def _postprocess(self, **kwargs) -> None:
         """Postprocessing step - save results and generate reports"""
@@ -228,10 +352,15 @@ class QuantitativeAnalysisPipeline(BaseAnalysisPipeline):
             
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             
-            # Save events with embeddings
+            # Save events (with embeddings if the legacy path produced them,
+            # otherwise the RAG path's events_with_news)
             if 'events_with_embeddings' in self._results:
                 events_file = f"events_with_embeddings_{timestamp}.parquet"
                 repository.save_events(self._results['events_with_embeddings'], events_file)
+                self.logger.info(f"Events saved to {events_file}")
+            elif 'events_with_news' in self._results:
+                events_file = f"events_with_news_{timestamp}.parquet"
+                repository.save_events(self._results['events_with_news'], events_file)
                 self.logger.info(f"Events saved to {events_file}")
             
             # Save explanations

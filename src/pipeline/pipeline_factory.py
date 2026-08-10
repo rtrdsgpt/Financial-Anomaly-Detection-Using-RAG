@@ -145,6 +145,22 @@ class PipelineBuilder:
         """Configure similarity analysis"""
         self.config['similarity_index_type'] = index_type
         return self
+
+    def with_rag(self, use_rag: bool = True, vector_store_backend: str = 'chroma',
+                 chunking_strategy: str = 'headline', use_reranker: bool = True,
+                 use_grounded_citations: bool = True, min_relevance_score: float = 0.0,
+                 max_retries: int = 2) -> 'PipelineBuilder':
+        """Configure the RAG upgrade path (chunking/vector-store/reranker/
+        grounded citations) versus the original whole-event FAISS path --
+        both stay available so they can be A/B'd for the eval harness."""
+        self.config['use_rag'] = use_rag
+        self.config['vector_store_backend'] = vector_store_backend
+        self.config['chunking_strategy'] = chunking_strategy
+        self.config['use_reranker'] = use_reranker
+        self.config['use_grounded_citations'] = use_grounded_citations
+        self.config['rag_min_relevance_score'] = min_relevance_score
+        self.config['rag_max_retries'] = max_retries
+        return self
     
     def with_save_results(self, save: bool = True) -> 'PipelineBuilder':
         """Configure result saving"""
@@ -175,6 +191,13 @@ class PipelineBuilder:
             self.config.setdefault('embedding_service', 'sentence_transformer')
             self.config.setdefault('similarity_index_type', 'flat')
             self.config.setdefault('save_results', True)
+            self.config.setdefault('use_rag', True)
+            self.config.setdefault('vector_store_backend', 'chroma')
+            self.config.setdefault('chunking_strategy', 'headline')
+            self.config.setdefault('use_reranker', True)
+            self.config.setdefault('use_grounded_citations', True)
+            self.config.setdefault('rag_min_relevance_score', 0.0)
+            self.config.setdefault('rag_max_retries', 2)
             
             # Create pipeline
             pipeline = PipelineFactory.create_quantitative_pipeline(self.config, self.observers)
