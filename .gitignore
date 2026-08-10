@@ -1,0 +1,62 @@
+# Secrets
+.env
+.env.*
+!.env.example
+api_keys.txt
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Test / lint / type-check caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# Vector store / model caches
+chroma_db/
+mlruns/
+mlartifacts/
+*.faiss
+
+# Generated results (keep the directory, ignore generated artifacts)
+results/*.parquet
+results/*.txt
+!results/README.md
+evaluation/results/*.json
+!evaluation/results/.gitkeep
+
+# Airflow
+airflow/logs/
+airflow/airflow.db
+airflow/airflow-webserver.pid
+airflow/plugins/__pycache__/
+
+# Docker
+*.pid
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Logs
+*.log
+quantitative_analysis.log
