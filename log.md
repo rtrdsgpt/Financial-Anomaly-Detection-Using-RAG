@@ -263,9 +263,82 @@ uses -- adapted to a client wrapper since this project's Strategy classes
 call `self.client.chat.completions.create(...)` directly. A single key
 still behaves exactly as before; rotation is a no-op superset.
 
-**Status at the point this log entry was written**: real event sourcing
-and retrieval metrics are complete and their numbers are in the README.
-The full baseline comparison (`evaluate_baselines.py` across all 112
-events x 4 configs) was still running/pending a rerun with the rotating
-client -- its numbers, once produced by an actual run, go in the README's
-Results section the same way retrieval's did, not before.
+**Even the rotating client couldn't outrun a shared daily quota, so the
+run needed to be checkpointed and resumed, not just retried.** The first
+full attempt with `RotatingGroqClient` in place still hit a wall at case
+58/112 -- not a per-minute limit this time but Groq's daily token quota
+(TPD: 200,000/day on `qwen/qwen3.6-27b`), and all 3 configured keys hit it
+within minutes of each other. The error messages carried the same
+organization id (`org_01kz0cby1ye28vhz052bd8qq7m`) across all three,
+which is the actual tell: these keys most likely share one org-level TPD
+pool rather than each having an independent one, so rotation bought early
+runway (successfully switched keys once around case 17) but was never
+going to out-run a cap shared across all of them. Worse, nothing had been
+written to disk -- `evaluate_baselines.py` only wrote its report once, at
+the very end -- so the only record of ~57 already-completed, already-
+token-spent cases was the user's terminal scrollback, which they pasted
+in full. Recovered `fact_overlap`/`citation_precision` for the 56 cases
+that had fully succeeded (explanation text and citation_coverage/
+unsupported_claim_rate weren't printed to the terminal and are genuinely
+gone for those) into a seed checkpoint, then added the actual fix: `write_
+report()` after every case instead of only at the end, default resume
+behavior that skips anything already successful in every config, and a
+fail-fast path in `with_retries` for daily-quota errors specifically (no
+point burning 5-15s of backoff on something that won't clear for minutes
+to hours). Same problem and the same fix Exporter Crawl already needed for
+its own long runs -- `checkpoint_path` there, `write_report()`/`--no-
+resume` here. Two more resume cycles (99/112, then the last 13) finished
+the run without losing anything further.
+
+**Final results, all 112 events, all 4 configs succeeded**:
+
+| Config | fact_overlap | citation_precision | citation_coverage | unsupported_claim_rate |
+|---|---|---|---|---|
+| LLM-only | 0.678 | -- | -- | -- |
+| LLM + legacy retrieval | 0.621 | -- | -- | -- |
+| RAG (no reranker) | 0.220 | 0.985 | 0.498 | 0.502 |
+| RAG + reranker | 0.158 | 0.978 | 0.463 | 0.537 |
+
+The naive reading of that table -- "RAG scores worse than no retrieval at
+all" -- is wrong, and it's worth spelling out exactly why, since it's a
+real methodology lesson, not just a caveat to bury in a footnote.
+`fact_overlap` was defined (in the section above, for the deterministic
+eval) as token overlap between the explanation and the query event's own
+headline-derived key facts. LLM-only and legacy-retrieval both see that
+headline verbatim in their prompt with no instruction to avoid restating
+it, so a model that just paraphrases its input scores well on this metric
+by construction. The grounded RAG prompt (`_create_grounded_prompt` in
+`grounded_explainer.py`) explicitly asks the model to explain using cited
+historical sources instead of re-describing today's event -- the intended
+behavior for a citation-grounded system -- and `fact_overlap` penalizes
+exactly that. Spot-checking actual RAG outputs during development (section
+above, the `real_NVDA_0` example) showed the grounded strategy correctly
+declining to fabricate a historical connection when the retrieved news
+didn't support one; that correct, cautious behavior also can't score well
+on a "did you repeat today's headline" metric. Comparing `fact_overlap`
+head-to-head across prompt designs that reward opposite behaviors isn't a
+fair comparison, and the README says so plainly rather than presenting the
+raw numbers without that context -- which would have been technically true
+and substantively misleading, exactly the kind of thing the "no fabricated
+numbers" principle exists to prevent even when nothing is literally
+invented.
+
+The citation-specific metrics are the ones that actually measure what RAG
+is for: 97-99% citation precision (when the model cites a source, it's
+almost always a real substring match -- `CitationVerifier` doing its job)
+against only ~46-50% citation coverage (roughly half of comparative/
+historical-sounding claims, by the regex heuristic, carry a citation at
+all). High trust in what's cited, incomplete citing of what should be --
+a real, moderate, useful finding to improve on next (a stricter prompt
+requirement, or scoring/rejecting ungrounded sentences post-hoc).
+
+**Reranker ablation, run for real**: worse on every metric measured, not
+better -- fact_overlap 0.220 -> 0.158, citation_precision 0.985 -> 0.978,
+citation_coverage 0.498 -> 0.463, unsupported_claim_rate 0.502 -> 0.537.
+Consistent with the retrieval-only Recall@5/MRR@5 numbers from earlier in
+this section (recall also dropped post-rerank, MRR improved slightly).
+Across two independent measurements now, the cross-encoder reranker does
+not clearly help this pipeline on this event set. That is the actual
+result of running the ablation the user asked for -- not the "reranking
+improved relevance by X%" outcome that would read better, but the one a
+real run produced.

@@ -1,0 +1,864 @@
+{
+  "summary": {
+    "num_cases": 112,
+    "num_scored": 106,
+    "num_excluded_no_relevant_docs": 6,
+    "pre_rerank_mean_recall5": 0.4212151841868823,
+    "pre_rerank_mean_mrr5": 0.666194968553459,
+    "post_rerank_mean_recall5": 0.4045934411500449,
+    "post_rerank_mean_mrr5": 0.6860062893081761,
+    "reranker_recall5_lift": -0.01662174303683739,
+    "reranker_mrr5_lift": 0.019811320754717032
+  },
+  "relevance_proxy": "same ticker, same Event_Type as the query event, excluding the query itself",
+  "per_case": [
+    {
+      "case_id": "real_NVDA_0",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.375,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.375,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_NVDA_2",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.375,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.375,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_NVDA_3",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.5,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.375,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_NVDA_4",
+      "num_relevant": 1,
+      "pre_rerank_recall5": 1.0,
+      "pre_rerank_mrr5": 0.2,
+      "post_rerank_recall5": 1.0,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_NVDA_5",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.375,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.25,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_NVDA_6",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.5,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.25,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_NVDA_7",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.5,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.375,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_NVDA_8",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.625,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.5,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_NVDA_9",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.375,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.375,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_NVDA_10",
+      "num_relevant": 1,
+      "pre_rerank_recall5": 1.0,
+      "pre_rerank_mrr5": 0.2,
+      "post_rerank_recall5": 0.0,
+      "post_rerank_mrr5": 0.0
+    },
+    {
+      "case_id": "real_NVDA_11",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.5,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.625,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_TSLA_0",
+      "num_relevant": 1,
+      "pre_rerank_recall5": 1.0,
+      "pre_rerank_mrr5": 0.2,
+      "post_rerank_recall5": 0.0,
+      "post_rerank_mrr5": 0.0
+    },
+    {
+      "case_id": "real_TSLA_1",
+      "num_relevant": 1,
+      "pre_rerank_recall5": 1.0,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 1.0,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_TSLA_2",
+      "num_relevant": 1,
+      "pre_rerank_recall5": 1.0,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 1.0,
+      "post_rerank_mrr5": 0.2
+    },
+    {
+      "case_id": "real_TSLA_3",
+      "num_relevant": 1,
+      "pre_rerank_recall5": 0.0,
+      "pre_rerank_mrr5": 0.0,
+      "post_rerank_recall5": 1.0,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_TSLA_4",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_TSLA_5",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 0.25,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_TSLA_6",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_TSLA_7",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.6666666666666666,
+      "pre_rerank_mrr5": 0.25,
+      "post_rerank_recall5": 0.6666666666666666,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_AAPL_0",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.375,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.375,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_AAPL_1",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.25,
+      "pre_rerank_mrr5": 0.3333333333333333,
+      "post_rerank_recall5": 0.375,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_AAPL_2",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.25,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.25,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_AAPL_3",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.25,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.375,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_AAPL_4",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.25,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.25,
+      "post_rerank_mrr5": 0.3333333333333333
+    },
+    {
+      "case_id": "real_AAPL_5",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.25,
+      "pre_rerank_mrr5": 0.3333333333333333,
+      "post_rerank_recall5": 0.25,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_AAPL_6",
+      "num_relevant": 1,
+      "pre_rerank_recall5": 1.0,
+      "pre_rerank_mrr5": 0.25,
+      "post_rerank_recall5": 1.0,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_AAPL_7",
+      "num_relevant": 1,
+      "pre_rerank_recall5": 0.0,
+      "pre_rerank_mrr5": 0.0,
+      "post_rerank_recall5": 1.0,
+      "post_rerank_mrr5": 0.3333333333333333
+    },
+    {
+      "case_id": "real_AAPL_9",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.25,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.375,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_AAPL_10",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.375,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.25,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_AAPL_11",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.125,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 0.125,
+      "post_rerank_mrr5": 0.2
+    },
+    {
+      "case_id": "real_META_0",
+      "num_relevant": 4,
+      "pre_rerank_recall5": 0.75,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 0.25,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_META_1",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 0.2,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 0.25
+    },
+    {
+      "case_id": "real_META_2",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 0.25,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_META_3",
+      "num_relevant": 4,
+      "pre_rerank_recall5": 0.5,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 0.5,
+      "post_rerank_mrr5": 0.3333333333333333
+    },
+    {
+      "case_id": "real_META_4",
+      "num_relevant": 2,
+      "pre_rerank_recall5": 0.5,
+      "pre_rerank_mrr5": 0.2,
+      "post_rerank_recall5": 0.0,
+      "post_rerank_mrr5": 0.0
+    },
+    {
+      "case_id": "real_META_5",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.0,
+      "pre_rerank_mrr5": 0.0,
+      "post_rerank_recall5": 0.6666666666666666,
+      "post_rerank_mrr5": 0.3333333333333333
+    },
+    {
+      "case_id": "real_META_6",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 0.25,
+      "post_rerank_recall5": 0.0,
+      "post_rerank_mrr5": 0.0
+    },
+    {
+      "case_id": "real_META_7",
+      "num_relevant": 4,
+      "pre_rerank_recall5": 0.25,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 0.25,
+      "post_rerank_mrr5": 0.3333333333333333
+    },
+    {
+      "case_id": "real_META_8",
+      "num_relevant": 2,
+      "pre_rerank_recall5": 0.0,
+      "pre_rerank_mrr5": 0.0,
+      "post_rerank_recall5": 0.0,
+      "post_rerank_mrr5": 0.0
+    },
+    {
+      "case_id": "real_META_9",
+      "num_relevant": 2,
+      "pre_rerank_recall5": 0.0,
+      "pre_rerank_mrr5": 0.0,
+      "post_rerank_recall5": 0.5,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_META_10",
+      "num_relevant": 4,
+      "pre_rerank_recall5": 0.25,
+      "pre_rerank_mrr5": 0.2,
+      "post_rerank_recall5": 0.0,
+      "post_rerank_mrr5": 0.0
+    },
+    {
+      "case_id": "real_META_11",
+      "num_relevant": 4,
+      "pre_rerank_recall5": 0.5,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.5,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_JPM_0",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_JPM_1",
+      "num_relevant": 6,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.5,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_JPM_2",
+      "num_relevant": 6,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.5,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_JPM_4",
+      "num_relevant": 6,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_JPM_5",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 1.0,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_JPM_6",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_JPM_7",
+      "num_relevant": 6,
+      "pre_rerank_recall5": 0.5,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_JPM_8",
+      "num_relevant": 6,
+      "pre_rerank_recall5": 0.5,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_JPM_9",
+      "num_relevant": 6,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.5,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_JPM_10",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.6666666666666666,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_JPM_11",
+      "num_relevant": 6,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 0.3333333333333333,
+      "post_rerank_recall5": 0.5,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_XOM_0",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 0.0,
+      "post_rerank_mrr5": 0.0
+    },
+    {
+      "case_id": "real_XOM_1",
+      "num_relevant": 7,
+      "pre_rerank_recall5": 0.14285714285714285,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 0.2857142857142857,
+      "post_rerank_mrr5": 0.3333333333333333
+    },
+    {
+      "case_id": "real_XOM_2",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.6666666666666666,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_XOM_3",
+      "num_relevant": 7,
+      "pre_rerank_recall5": 0.5714285714285714,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 0.2857142857142857,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_XOM_4",
+      "num_relevant": 7,
+      "pre_rerank_recall5": 0.5714285714285714,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.42857142857142855,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_XOM_5",
+      "num_relevant": 7,
+      "pre_rerank_recall5": 0.42857142857142855,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.42857142857142855,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_XOM_6",
+      "num_relevant": 7,
+      "pre_rerank_recall5": 0.2857142857142857,
+      "pre_rerank_mrr5": 0.3333333333333333,
+      "post_rerank_recall5": 0.42857142857142855,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_XOM_7",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 0.3333333333333333,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 0.2
+    },
+    {
+      "case_id": "real_XOM_8",
+      "num_relevant": 7,
+      "pre_rerank_recall5": 0.42857142857142855,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.5714285714285714,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_XOM_9",
+      "num_relevant": 7,
+      "pre_rerank_recall5": 0.2857142857142857,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.2857142857142857,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_XOM_10",
+      "num_relevant": 7,
+      "pre_rerank_recall5": 0.2857142857142857,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 0.2857142857142857,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_XOM_11",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.0,
+      "pre_rerank_mrr5": 0.0,
+      "post_rerank_recall5": 0.0,
+      "post_rerank_mrr5": 0.0
+    },
+    {
+      "case_id": "real_PFE_0",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.6666666666666666,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 0.3333333333333333
+    },
+    {
+      "case_id": "real_PFE_1",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 1.0,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 1.0,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_PFE_2",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 1.0,
+      "pre_rerank_mrr5": 0.3333333333333333,
+      "post_rerank_recall5": 0.6666666666666666,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_PFE_3",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 0.3333333333333333,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 0.3333333333333333
+    },
+    {
+      "case_id": "real_PFE_4",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 1.0,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_PFE_5",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 1.0,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 0.6666666666666666,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_PFE_6",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.6666666666666666,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 1.0,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_PFE_7",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.0,
+      "pre_rerank_mrr5": 0.0,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_AMZN_0",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.375,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.5,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_AMZN_1",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.5,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.5,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_AMZN_2",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.5,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.375,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_AMZN_3",
+      "num_relevant": 1,
+      "pre_rerank_recall5": 0.0,
+      "pre_rerank_mrr5": 0.0,
+      "post_rerank_recall5": 0.0,
+      "post_rerank_mrr5": 0.0
+    },
+    {
+      "case_id": "real_AMZN_4",
+      "num_relevant": 1,
+      "pre_rerank_recall5": 1.0,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 1.0,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_AMZN_5",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.5,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.375,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_AMZN_7",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.375,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.375,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_AMZN_8",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.625,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.5,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_AMZN_9",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.5,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.5,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_AMZN_10",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.5,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.5,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_AMZN_11",
+      "num_relevant": 8,
+      "pre_rerank_recall5": 0.5,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.375,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_NFLX_0",
+      "num_relevant": 2,
+      "pre_rerank_recall5": 0.0,
+      "pre_rerank_mrr5": 0.0,
+      "post_rerank_recall5": 0.0,
+      "post_rerank_mrr5": 0.0
+    },
+    {
+      "case_id": "real_NFLX_1",
+      "num_relevant": 7,
+      "pre_rerank_recall5": 0.2857142857142857,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.5714285714285714,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_NFLX_2",
+      "num_relevant": 7,
+      "pre_rerank_recall5": 0.2857142857142857,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.42857142857142855,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_NFLX_4",
+      "num_relevant": 7,
+      "pre_rerank_recall5": 0.5714285714285714,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.42857142857142855,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_NFLX_5",
+      "num_relevant": 7,
+      "pre_rerank_recall5": 0.2857142857142857,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.42857142857142855,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_NFLX_6",
+      "num_relevant": 2,
+      "pre_rerank_recall5": 0.0,
+      "pre_rerank_mrr5": 0.0,
+      "post_rerank_recall5": 0.0,
+      "post_rerank_mrr5": 0.0
+    },
+    {
+      "case_id": "real_NFLX_7",
+      "num_relevant": 2,
+      "pre_rerank_recall5": 0.0,
+      "pre_rerank_mrr5": 0.0,
+      "post_rerank_recall5": 0.0,
+      "post_rerank_mrr5": 0.0
+    },
+    {
+      "case_id": "real_NFLX_8",
+      "num_relevant": 7,
+      "pre_rerank_recall5": 0.2857142857142857,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.2857142857142857,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_NFLX_9",
+      "num_relevant": 7,
+      "pre_rerank_recall5": 0.42857142857142855,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.42857142857142855,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_NFLX_10",
+      "num_relevant": 7,
+      "pre_rerank_recall5": 0.2857142857142857,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.42857142857142855,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_NFLX_11",
+      "num_relevant": 7,
+      "pre_rerank_recall5": 0.42857142857142855,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.42857142857142855,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_BA_0",
+      "num_relevant": 6,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.6666666666666666,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_BA_1",
+      "num_relevant": 6,
+      "pre_rerank_recall5": 0.16666666666666666,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.5,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_BA_2",
+      "num_relevant": 6,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 0.6666666666666666,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_BA_3",
+      "num_relevant": 6,
+      "pre_rerank_recall5": 0.16666666666666666,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_BA_4",
+      "num_relevant": 6,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 1.0
+    },
+    {
+      "case_id": "real_BA_5",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.6666666666666666,
+      "pre_rerank_mrr5": 0.5,
+      "post_rerank_recall5": 0.0,
+      "post_rerank_mrr5": 0.0
+    },
+    {
+      "case_id": "real_BA_6",
+      "num_relevant": 6,
+      "pre_rerank_recall5": 0.16666666666666666,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.16666666666666666,
+      "post_rerank_mrr5": 0.2
+    },
+    {
+      "case_id": "real_BA_7",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 0.3333333333333333,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 0.25
+    },
+    {
+      "case_id": "real_BA_9",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.6666666666666666,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 0.25
+    },
+    {
+      "case_id": "real_BA_10",
+      "num_relevant": 3,
+      "pre_rerank_recall5": 0.6666666666666666,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 0.5
+    },
+    {
+      "case_id": "real_BA_11",
+      "num_relevant": 6,
+      "pre_rerank_recall5": 0.3333333333333333,
+      "pre_rerank_mrr5": 1.0,
+      "post_rerank_recall5": 0.3333333333333333,
+      "post_rerank_mrr5": 1.0
+    }
+  ]
+}

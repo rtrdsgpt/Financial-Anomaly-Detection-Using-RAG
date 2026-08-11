@@ -58,21 +58,64 @@ a relevant item is already in the top 5 it tends to rank it higher (MRR
 improves). Reported as measured, not rounded or spun to look better.
 
 **Baseline comparison** (`evaluate_baselines.py` -- LLM-only vs. LLM +
-legacy whole-event retrieval vs. RAG vs. RAG + reranker, same real events,
-same metrics) and the **synthetic dual-metric eval** (`evaluate.py`) are
-both real and runnable against a live `GROQ_API_KEY`:
+legacy whole-event retrieval vs. RAG vs. RAG + reranker, all 112 real
+events, same metrics):
+
+| Config | fact_overlap | citation_precision | citation_coverage | unsupported_claim_rate |
+|---|---|---|---|---|
+| LLM-only (no retrieval) | **0.678** | -- | -- | -- |
+| LLM + legacy whole-event retrieval | 0.621 | -- | -- | -- |
+| RAG (chunked, no reranker) | 0.220 | **0.985** | 0.498 | 0.502 |
+| RAG + reranker | 0.158 | 0.978 | 0.463 | 0.537 |
+
+**Read this table carefully -- the obvious conclusion is the wrong one.**
+`fact_overlap` checks whether the explanation repeats the token-level key
+facts extracted from the *query event's own headline*. LLM-only and
+legacy-retrieval both see that headline verbatim in their prompt and are
+never discouraged from restating it, so they score well on a metric that
+mostly rewards restating the input. The grounded RAG prompt does the
+opposite on purpose: it instructs the model to explain using cited
+historical sources rather than re-describing today's headline, and several
+RAG outputs correctly decline to fabricate a historical connection when the
+real retrieved news doesn't support one (see `log.md`) -- behavior this
+metric actively penalizes despite it being the citation verifier working
+as intended. **`fact_overlap` is not a fair head-to-head metric across
+these two prompt designs**, and this README isn't going to spin it into
+one.
+
+The metrics that *do* mean what they say for RAG's actual goal (grounded,
+verifiable citations) are the citation ones: **98%+ citation precision**
+(when the model cites something, it's almost always a real substring of
+the source -- the hallucination guard works) against **~46-50% citation
+coverage** (only about half of comparative/historical-sounding claims
+carry a citation at all, by the regex heuristic in `metrics.py`). High
+trust in what's cited, incomplete citing of what should be.
+
+**Reranker ablation**: worse on every measured axis here, not better --
+fact_overlap 0.220 -> 0.158, citation_precision 0.985 -> 0.978, citation_
+coverage 0.498 -> 0.463, unsupported_claim_rate 0.502 -> 0.537. Consistent
+with the retrieval-only numbers above (recall also dropped post-rerank).
+This is the real result of actually running the ablation, not the
+"reranking improved relevance by X%" story that would look better --
+across every metric measured on this event set, the cross-encoder reranker
+did not help.
+
+Both `evaluate_baselines.py` and the **synthetic dual-metric eval**
+(`evaluate.py`) are real and rerunnable against a live `GROQ_API_KEY`
+(`evaluate_baselines.py` checkpoints after every case and resumes
+automatically -- see `log.md` for why that matters on a free-tier daily
+token quota):
 
 ```bash
 venv/bin/python3 src/experiments/retrieval_metrics.py     # no API key needed
-venv/bin/python3 src/experiments/evaluate_baselines.py    # ~450 Groq calls
+venv/bin/python3 src/experiments/evaluate_baselines.py    # ~450 Groq calls, resumable
 venv/bin/python3 src/experiments/evaluate.py               # synthetic set
 ```
 
 Reports land in `results/eval/*.json`; `venv/bin/mlflow ui` for tracked
-`evaluate.py` runs. As with retrieval, any numbers added here later will be
-exactly what a real run produced -- see [`log.md`](log.md) for the full
-methodology and its limitations (relevance proxy, no ground-truth prose for
-real events, sample size, Finnhub free tier's ~1-year news coverage).
+`evaluate.py` runs. See [`log.md`](log.md) for the full methodology and its
+limitations (relevance proxy, no ground-truth prose for real events, the
+`fact_overlap` caveat above, Finnhub free tier's ~1-year news coverage).
 
 ## Architecture
 
