@@ -1,5 +1,6 @@
 """
-OOP-based main application implementing design patterns and SOLID principles.
+CLI entry point for Financial Anomaly Detection Using RAG, implementing
+design patterns and SOLID principles.
 """
 
 import logging
@@ -203,7 +204,7 @@ def main():
     """Main function"""
     try:
         print("="*60)
-        print("QUANTITATIVE ANALYSIS PIPELINE (OOP VERSION)")
+        print("FINANCIAL ANOMALY DETECTION USING RAG")
         print("="*60)
         
         # Create application

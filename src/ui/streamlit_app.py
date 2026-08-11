@@ -136,7 +136,7 @@ class StreamlitApp:
     
     def render_welcome_page(self) -> None:
         """Render the welcome page"""
-        st.markdown('<h1 class="main-header">📊 Financial Anomaly Interpretability using LLMs</h1>', unsafe_allow_html=True)
+        st.markdown('<h1 class="main-header">📊 Financial Anomaly Detection Using RAG</h1>', unsafe_allow_html=True)
         
         st.markdown("""
         ## 🎯 Welcome to Quantitative Market Analysis
