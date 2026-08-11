@@ -1,0 +1,230 @@
+{
+  "note": "SYNTHETIC fixtures, hand-written for testing groundedness/faithfulness of the grounded explainer. None of these are real historical events, tickers, or companies -- do not present eval_report output as real market history.",
+  "cases": [
+    {
+      "id": "earnings_surprise_1",
+      "scenario_type": "earnings_surprise",
+      "event": {
+        "Date": "2025-01-15",
+        "Ticker": "NSTR",
+        "Event_Type": "Positive Outlier",
+        "Z_score": 3.4,
+        "Return": 0.091,
+        "News_Headlines": "Northstar Technologies beats Q4 EPS estimates by 22%; raises full-year guidance on cloud segment demand"
+      },
+      "historical_context": [
+        {"Date": "2024-10-16", "Ticker": "NSTR", "Event_Type": "Positive Outlier", "Z_score": 2.9, "News_Headlines": "Northstar Technologies Q3 revenue beats consensus by 8%; cloud bookings accelerate"},
+        {"Date": "2024-07-17", "Ticker": "NSTR", "Event_Type": "Positive Outlier", "Z_score": 3.1, "News_Headlines": "Northstar Technologies Q2 EPS beats by 15%; management cites enterprise contract wins"},
+        {"Date": "2024-04-18", "Ticker": "NSTR", "Event_Type": "Negative Outlier", "Z_score": -2.6, "News_Headlines": "Northstar Technologies misses Q1 revenue estimates; cites slower enterprise spending"}
+      ],
+      "ground_truth_explanation": "The stock jumped because Northstar beat quarterly EPS estimates by a wide margin and raised full-year guidance, driven by strong cloud segment demand -- consistent with the pattern from Q2 and Q3 2024, where earnings beats tied to cloud bookings also produced positive outliers.",
+      "key_facts": ["EPS beat", "raised guidance", "cloud segment demand", "prior quarters also beat on cloud strength"]
+    },
+    {
+      "id": "fed_decision_1",
+      "scenario_type": "fed_decision",
+      "event": {
+        "Date": "2025-03-19",
+        "Ticker": "SPY",
+        "Event_Type": "Negative Outlier",
+        "Z_score": -2.8,
+        "Return": -0.021,
+        "News_Headlines": "Federal Reserve holds rates steady but signals fewer cuts in 2025 than markets expected; hawkish dot plot surprises investors"
+      },
+      "historical_context": [
+        {"Date": "2024-12-18", "Ticker": "SPY", "Event_Type": "Negative Outlier", "Z_score": -2.5, "News_Headlines": "Fed cuts rates but chair signals slower pace of cuts ahead; hawkish tone unsettles markets"},
+        {"Date": "2024-09-18", "Ticker": "SPY", "Event_Type": "Positive Outlier", "Z_score": 2.2, "News_Headlines": "Fed cuts rates by 50bps, larger than expected; markets rally on dovish surprise"}
+      ],
+      "ground_truth_explanation": "The market dropped because the Fed's hawkish dot plot signaled fewer rate cuts than investors had priced in -- similar to the December 2024 reaction, where a hawkish tone despite an actual cut still triggered a selloff, showing markets react to forward guidance more than the decision itself.",
+      "key_facts": ["fewer cuts than expected", "hawkish dot plot", "forward guidance surprised markets", "similar hawkish reaction in December"]
+    },
+    {
+      "id": "guidance_cut_1",
+      "scenario_type": "guidance_cut",
+      "event": {
+        "Date": "2025-02-05",
+        "Ticker": "BLTX",
+        "Event_Type": "Negative Outlier",
+        "Z_score": -3.2,
+        "Return": -0.14,
+        "News_Headlines": "Boltix Industries cuts full-year revenue guidance by 12%, citing softening demand in industrial automation segment"
+      },
+      "historical_context": [
+        {"Date": "2024-11-06", "Ticker": "BLTX", "Event_Type": "Negative Outlier", "Z_score": -2.4, "News_Headlines": "Boltix Industries warns of slowing order growth in industrial automation; shares slide"},
+        {"Date": "2024-08-07", "Ticker": "BLTX", "Event_Type": "Positive Outlier", "Z_score": 2.1, "News_Headlines": "Boltix Industries reports record backlog in automation orders; shares climb"}
+      ],
+      "ground_truth_explanation": "Shares fell sharply after Boltix cut full-year guidance due to softening industrial automation demand -- a continuation of the slowdown first flagged in November 2024, reversing the record-backlog optimism from August.",
+      "key_facts": ["guidance cut", "industrial automation demand softening", "slowdown flagged in prior quarter", "reversal from record backlog"]
+    },
+    {
+      "id": "ma_rumor_1",
+      "scenario_type": "ma_rumor",
+      "event": {
+        "Date": "2025-04-02",
+        "Ticker": "VRDN",
+        "Event_Type": "Positive Outlier",
+        "Z_score": 4.1,
+        "Return": 0.183,
+        "News_Headlines": "Sources say Verdant Health in advanced talks to be acquired by larger healthcare conglomerate at a premium"
+      },
+      "historical_context": [
+        {"Date": "2025-02-14", "Ticker": "VRDN", "Event_Type": "Positive Outlier", "Z_score": 2.3, "News_Headlines": "Verdant Health shares rise on speculation of strategic review after activist investor stake disclosed"}
+      ],
+      "ground_truth_explanation": "The large jump reflects acquisition-premium speculation after reports of advanced buyout talks -- building on February's activist-investor-driven strategic review speculation, which now appears to be materializing into an actual deal process.",
+      "key_facts": ["acquisition talks", "premium to current price", "follows earlier activist/strategic review speculation"]
+    },
+    {
+      "id": "short_squeeze_1",
+      "scenario_type": "short_squeeze",
+      "event": {
+        "Date": "2025-01-27",
+        "Ticker": "GMEX",
+        "Event_Type": "Positive Outlier",
+        "Z_score": 5.2,
+        "Return": 0.412,
+        "News_Headlines": "Retail trading forums drive coordinated buying in Gamex Interactive amid high short interest; shares halted multiple times for volatility"
+      },
+      "historical_context": [
+        {"Date": "2024-06-13", "Ticker": "GMEX", "Event_Type": "Positive Outlier", "Z_score": 4.8, "News_Headlines": "Gamex Interactive surges on renewed meme-stock interest and elevated short interest above 20% of float"}
+      ],
+      "ground_truth_explanation": "The extreme move is a short squeeze: coordinated retail buying against a heavily shorted stock forced short sellers to cover, similar to the June 2024 meme-stock episode also driven by high short interest.",
+      "key_facts": ["high short interest", "coordinated retail buying", "short covering", "prior similar meme-stock squeeze"]
+    },
+    {
+      "id": "supply_chain_shock_1",
+      "scenario_type": "supply_chain_shock",
+      "event": {
+        "Date": "2025-05-08",
+        "Ticker": "CHPW",
+        "Event_Type": "Negative Outlier",
+        "Z_score": -3.6,
+        "Return": -0.117,
+        "News_Headlines": "ChipWorks warns of extended semiconductor shortage after key supplier facility flooding halts production for weeks"
+      },
+      "historical_context": [
+        {"Date": "2024-03-11", "Ticker": "CHPW", "Event_Type": "Negative Outlier", "Z_score": -2.7, "News_Headlines": "ChipWorks flags component shortages from key Asian supplier disrupting Q1 shipments"}
+      ],
+      "ground_truth_explanation": "ChipWorks fell on a supply chain disruption -- a supplier facility flooding halted production, extending a component-shortage pattern already seen in Q1 2024 with the same supplier relationship.",
+      "key_facts": ["supplier facility flooding", "production halt", "semiconductor shortage", "recurring supplier dependency issue"]
+    },
+    {
+      "id": "analyst_downgrade_1",
+      "scenario_type": "analyst_downgrade",
+      "event": {
+        "Date": "2025-06-11",
+        "Ticker": "FRNT",
+        "Event_Type": "Negative Outlier",
+        "Z_score": -2.6,
+        "Return": -0.058,
+        "News_Headlines": "Frontier Retail downgraded to Sell by three major banks citing weakening same-store sales trends"
+      },
+      "historical_context": [
+        {"Date": "2025-03-12", "Ticker": "FRNT", "Event_Type": "Negative Outlier", "Z_score": -2.1, "News_Headlines": "Frontier Retail same-store sales growth slows for second consecutive quarter"}
+      ],
+      "ground_truth_explanation": "Multiple analyst downgrades to Sell, citing weakening same-store sales, drove the decline -- consistent with the slowing same-store sales trend already visible in the March 2025 report.",
+      "key_facts": ["multiple analyst downgrades", "weakening same-store sales", "second consecutive quarter of slowdown"]
+    },
+    {
+      "id": "product_recall_1",
+      "scenario_type": "product_recall",
+      "event": {
+        "Date": "2025-07-22",
+        "Ticker": "AUTX",
+        "Event_Type": "Negative Outlier",
+        "Z_score": -3.9,
+        "Return": -0.132,
+        "News_Headlines": "AutoXcel issues recall of 400,000 vehicles over battery fire risk; regulators open safety investigation"
+      },
+      "historical_context": [
+        {"Date": "2024-09-03", "Ticker": "AUTX", "Event_Type": "Negative Outlier", "Z_score": -2.3, "News_Headlines": "AutoXcel recalls 50,000 vehicles for software issue affecting braking system"}
+      ],
+      "ground_truth_explanation": "Shares dropped on a large-scale recall over battery fire risk plus a regulatory safety investigation -- a more severe repeat of the smaller software-related recall in September 2024, this time involving physical safety risk and regulatory scrutiny.",
+      "key_facts": ["large vehicle recall", "battery fire risk", "regulatory investigation opened", "prior smaller recall precedent"]
+    },
+    {
+      "id": "regulatory_investigation_1",
+      "scenario_type": "regulatory_investigation",
+      "event": {
+        "Date": "2025-08-14",
+        "Ticker": "PYFL",
+        "Event_Type": "Negative Outlier",
+        "Z_score": -3.3,
+        "Return": -0.098,
+        "News_Headlines": "PayFlow shares fall after regulator announces formal probe into data privacy practices"
+      },
+      "historical_context": [
+        {"Date": "2025-05-20", "Ticker": "PYFL", "Event_Type": "Negative Outlier", "Z_score": -1.9, "News_Headlines": "PayFlow faces preliminary regulatory inquiry over user data handling"}
+      ],
+      "ground_truth_explanation": "The decline followed a formal regulatory probe into data privacy practices, escalating from the preliminary inquiry disclosed in May 2025.",
+      "key_facts": ["formal regulatory probe", "data privacy practices", "escalation from preliminary inquiry"]
+    },
+    {
+      "id": "ceo_departure_1",
+      "scenario_type": "ceo_departure",
+      "event": {
+        "Date": "2025-09-02",
+        "Ticker": "MDCR",
+        "Event_Type": "Negative Outlier",
+        "Z_score": -2.9,
+        "Return": -0.076,
+        "News_Headlines": "Meridian Care CEO resigns abruptly amid board dispute over strategic direction; no permanent successor named"
+      },
+      "historical_context": [
+        {"Date": "2024-12-05", "Ticker": "MDCR", "Event_Type": "Negative Outlier", "Z_score": -2.0, "News_Headlines": "Meridian Care board reportedly split over acquisition strategy, sources say"}
+      ],
+      "ground_truth_explanation": "The abrupt CEO resignation amid a board dispute over strategic direction, with no successor named, created leadership uncertainty -- building on reports from December 2024 of board disagreement over acquisition strategy.",
+      "key_facts": ["abrupt CEO resignation", "board dispute", "no successor named", "prior reports of board disagreement"]
+    },
+    {
+      "id": "dividend_cut_1",
+      "scenario_type": "dividend_cut",
+      "event": {
+        "Date": "2025-10-09",
+        "Ticker": "ENRG",
+        "Event_Type": "Negative Outlier",
+        "Z_score": -3.0,
+        "Return": -0.089,
+        "News_Headlines": "Enerco slashes quarterly dividend by 60% to preserve cash amid falling commodity prices"
+      },
+      "historical_context": [
+        {"Date": "2025-07-10", "Ticker": "ENRG", "Event_Type": "Negative Outlier", "Z_score": -1.8, "News_Headlines": "Enerco warns of cash flow pressure as commodity prices decline"}
+      ],
+      "ground_truth_explanation": "The dividend cut, made to preserve cash amid falling commodity prices, confirms the cash flow pressure Enerco had already flagged in July 2025.",
+      "key_facts": ["dividend cut", "cash preservation", "falling commodity prices", "prior cash flow warning"]
+    },
+    {
+      "id": "buyback_announcement_1",
+      "scenario_type": "buyback_announcement",
+      "event": {
+        "Date": "2025-11-04",
+        "Ticker": "STLW",
+        "Event_Type": "Positive Outlier",
+        "Z_score": 2.7,
+        "Return": 0.064,
+        "News_Headlines": "Steelworks Corp announces $2 billion share buyback program, its largest ever, citing confidence in free cash flow generation"
+      },
+      "historical_context": [
+        {"Date": "2025-08-05", "Ticker": "STLW", "Event_Type": "Positive Outlier", "Z_score": 2.0, "News_Headlines": "Steelworks Corp reports record free cash flow for the quarter"}
+      ],
+      "ground_truth_explanation": "Shares rose on a record $2 billion buyback announcement, which management tied directly to the strong free cash flow generation reported the prior quarter.",
+      "key_facts": ["large buyback announcement", "record size", "tied to free cash flow strength", "follows record cash flow quarter"]
+    },
+    {
+      "id": "sector_selloff_1",
+      "scenario_type": "sector_selloff",
+      "event": {
+        "Date": "2025-12-01",
+        "Ticker": "REGB",
+        "Event_Type": "Volatility Spike",
+        "Z_score": -1.9,
+        "Return": -0.071,
+        "News_Headlines": "Regional bank stocks broadly sell off after peer institution reports unexpected loan losses, reviving deposit-flight concerns"
+      },
+      "historical_context": [
+        {"Date": "2025-03-10", "Ticker": "REGB", "Event_Type": "Negative Outlier", "Z_score": -2.5, "News_Headlines": "Regional bank sector drops sharply amid deposit-flight fears after a peer bank's liquidity issues surface"}
+      ],
+      "ground_truth_explanation": "The move is a sector-wide selloff triggered by a peer regional bank's unexpected loan losses, reviving the same deposit-flight fears that hit the sector in March 2025.",
+      "key_facts": ["peer bank reports loan losses", "sector-wide contagion", "deposit-flight concerns", "similar fear episode earlier in year"]
+    }
+  ]
+}

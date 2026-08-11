@@ -35,9 +35,9 @@ mlartifacts/
 # Generated results (keep the directory, ignore generated artifacts)
 results/*.parquet
 results/*.txt
+results/eval/*.json
 !results/README.md
-evaluation/results/*.json
-!evaluation/results/.gitkeep
+!results/eval/.gitkeep
 
 # Airflow
 airflow/logs/

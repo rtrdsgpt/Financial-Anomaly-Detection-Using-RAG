@@ -96,7 +96,7 @@ class GroundedGroqExplanationStrategy(AIExplanationStrategy):
         grounded explanation (with any unverified citations flagged inline)
         as plain text."""
         grounded = self.explain_event_grounded(event_data, similar_events)
-        return self._render(grounded)
+        return self.render(grounded)
 
     def explain_event_grounded(self, event_data: Dict[str, Any], similar_events: List[Dict[str, Any]]) -> GroundedExplanation:
         """Retrieve source chunks via the RAG retriever, prompt for a
@@ -188,7 +188,11 @@ The "source_text" for each citation must be an exact, verbatim substring of that
             citations=[Citation(**c) for c in data.get("citations", [])],
         )
 
-    def _render(self, grounded: GroundedExplanation) -> str:
+    def render(self, grounded: GroundedExplanation) -> str:
+        """Render a GroundedExplanation as plain text, flagging any
+        citations that failed verification. Public so callers (e.g. the
+        eval harness) that already have a `GroundedExplanation` from
+        `explain_event_grounded` don't need to re-run `explain_event`."""
         text = grounded.explanation
         if grounded.unverified_citation_markers:
             flagged = ", ".join(grounded.unverified_citation_markers)
