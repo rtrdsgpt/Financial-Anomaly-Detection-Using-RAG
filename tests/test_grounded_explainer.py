@@ -48,19 +48,17 @@ class TestCitationVerifier:
         assert result.is_fully_grounded is True
 
 
-class _FakeCompletions:
+class _FakeGroqClient:
+    """Stands in for processors.groq_key_rotation.RotatingGroqClient,
+    which GroundedGroqExplanationStrategy.client actually is now."""
+
     def __init__(self, content: str):
         self._content = content
 
-    def create(self, **kwargs):
+    def create_chat_completion(self, **kwargs):
         message = types.SimpleNamespace(content=self._content)
         choice = types.SimpleNamespace(message=message)
         return types.SimpleNamespace(choices=[choice])
-
-
-class _FakeGroqClient:
-    def __init__(self, content: str):
-        self.chat = types.SimpleNamespace(completions=_FakeCompletions(content))
 
 
 @pytest.fixture

@@ -104,8 +104,8 @@ class LLMJudge:
         self.client = None
         self._is_available = False
         try:
-            from groq import Groq
-            self.client = Groq(api_key=api_key)
+            from processors.groq_key_rotation import RotatingGroqClient, parse_api_keys
+            self.client = RotatingGroqClient(parse_api_keys(api_key))
             self._is_available = True
         except Exception:
             self._is_available = False
@@ -135,7 +135,7 @@ Generated explanation to grade:
 Respond with a single JSON object:
 {{"faithfulness": <1-5>, "relevance": <1-5>, "citation_accuracy": <1-5>, "rationale": "<one sentence>"}}"""
 
-        response = self.client.chat.completions.create(
+        response = self.client.create_chat_completion(
             model=self.model,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.0,

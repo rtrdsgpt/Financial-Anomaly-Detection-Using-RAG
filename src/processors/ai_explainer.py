@@ -41,10 +41,11 @@ class GroqExplanationStrategy(AIExplanationStrategy):
             pass
     
     def _initialize_client(self) -> None:
-        """Initialize the Groq client"""
+        """Initialize the Groq client (rotates across a comma-separated
+        list of keys in self.api_key if one hits a rate limit)"""
         try:
-            from groq import Groq
-            self.client = Groq(api_key=self.api_key)
+            from processors.groq_key_rotation import RotatingGroqClient, parse_api_keys
+            self.client = RotatingGroqClient(parse_api_keys(self.api_key))
             self._is_available = True
         except Exception as e:
             self._is_available = False
@@ -63,7 +64,7 @@ class GroqExplanationStrategy(AIExplanationStrategy):
             prompt = self._create_explanation_prompt(event_data, similar_events)
             
             # Get AI explanation
-            response = self.client.chat.completions.create(
+            response = self.client.create_chat_completion(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.7,
