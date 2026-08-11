@@ -125,7 +125,7 @@ class QuantitativeAnalysisPipeline(BaseAnalysisPipeline):
 
                 if ai_api_key and self.config.get('use_grounded_citations', True):
                     self.ai_explainer = AIExplainerFactory.create_grounded_explainer(
-                        ai_api_key, self.rag_retriever, model=ai_config.get('model', 'meta-llama/llama-4-scout-17b-16e-instruct')
+                        ai_api_key, self.rag_retriever, model=ai_config.get('model', 'qwen/qwen3.6-27b')
                     )
 
             # Add observers to components

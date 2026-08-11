@@ -98,7 +98,7 @@ class LLMJudge:
     pattern from `GroqExplanationStrategy` rather than adding a new
     dependency."""
 
-    def __init__(self, api_key: str, model: str = 'meta-llama/llama-4-scout-17b-16e-instruct'):
+    def __init__(self, api_key: str, model: str = 'qwen/qwen3.6-27b'):
         self.api_key = api_key
         self.model = model
         self.client = None
@@ -141,6 +141,7 @@ Respond with a single JSON object:
             temperature=0.0,
             max_completion_tokens=300,
             response_format={"type": "json_object"},
+            reasoning_effort="none",
         )
         data = json.loads(response.choices[0].message.content)
         return JudgeScore(

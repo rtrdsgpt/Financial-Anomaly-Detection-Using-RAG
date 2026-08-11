@@ -28,7 +28,7 @@ class AIExplanationStrategy(ABC):
 class GroqExplanationStrategy(AIExplanationStrategy):
     """Strategy for generating explanations using Groq API"""
     
-    def __init__(self, api_key: str, model: str = 'meta-llama/llama-4-scout-17b-16e-instruct'):
+    def __init__(self, api_key: str, model: str = 'qwen/qwen3.6-27b'):
         self.api_key = api_key
         self.model = model
         self.client = None
@@ -71,10 +71,13 @@ class GroqExplanationStrategy(AIExplanationStrategy):
                 top_p=1,
                 stream=False,
                 stop=None,
+                # qwen3.6-27b supports fully disabling reasoning; avoids
+                # burning part of the token budget on hidden thinking.
+                reasoning_effort="none",
             )
-            
+
             return response.choices[0].message.content
-            
+
         except Exception as e:
             raise APIClientError(f"Failed to generate Groq explanation: {e}")
     
@@ -319,7 +322,7 @@ class AIExplainerFactory:
     """Factory for creating AI explainers (Factory pattern)"""
     
     @staticmethod
-    def create_groq_explainer(api_key: str, model: str = 'meta-llama/llama-4-scout-17b-16e-instruct') -> AIExplainer:
+    def create_groq_explainer(api_key: str, model: str = 'qwen/qwen3.6-27b') -> AIExplainer:
         """Create a Groq-based AI explainer"""
         strategy = GroqExplanationStrategy(api_key, model)
         return AIExplainer(strategy)
@@ -334,7 +337,7 @@ class AIExplainerFactory:
     def create_explainer(service: str, api_key: str, **kwargs) -> AIExplainer:
         """Create an AI explainer based on the service type"""
         if service.lower() == 'groq':
-            model = kwargs.get('model', 'meta-llama/llama-4-scout-17b-16e-instruct')
+            model = kwargs.get('model', 'qwen/qwen3.6-27b')
             return AIExplainerFactory.create_groq_explainer(api_key, model)
         elif service.lower() == 'openai':
             model = kwargs.get('model', 'gpt-3.5-turbo')
@@ -343,7 +346,7 @@ class AIExplainerFactory:
             raise ValueError(f"Unknown AI service: {service}")
 
     @staticmethod
-    def create_grounded_explainer(api_key: str, retriever, model: str = 'meta-llama/llama-4-scout-17b-16e-instruct',
+    def create_grounded_explainer(api_key: str, retriever, model: str = 'qwen/qwen3.6-27b',
                                    top_k_sources: int = 5) -> AIExplainer:
         """Create a retrieval-grounded, citation-verified AI explainer.
 

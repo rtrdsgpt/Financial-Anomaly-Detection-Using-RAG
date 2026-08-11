@@ -68,7 +68,7 @@ class GroundedGroqExplanationStrategy(AIExplanationStrategy):
         self,
         api_key: str,
         retriever: RAGRetriever,
-        model: str = 'meta-llama/llama-4-scout-17b-16e-instruct',
+        model: str = 'qwen/qwen3.6-27b',
         top_k_sources: int = 5,
     ):
         self.api_key = api_key
@@ -128,6 +128,11 @@ class GroundedGroqExplanationStrategy(AIExplanationStrategy):
                 stream=False,
                 stop=None,
                 response_format={"type": "json_object"},
+                # qwen3.6-27b supports fully disabling reasoning (unlike
+                # Groq's gpt-oss models, which only go down to 'low' and
+                # still spend part of the token budget on hidden thinking
+                # -- risking an empty response on tighter budgets like this).
+                reasoning_effort="none",
             )
 
             raw = response.choices[0].message.content
