@@ -149,3 +149,61 @@ Respond with a single JSON object:
             citation_accuracy=int(data.get("citation_accuracy", 1)),
             rationale=data.get("rationale", ""),
         )
+
+
+# --- Grounding metrics for the real-event / baseline-comparison harness
+# (evaluate_baselines.py). Named precisely, since "coverage" in
+# DeterministicScore above actually measures citation *precision*
+# (verified / total citations) -- kept as-is there for backward
+# compatibility with the synthetic eval harness, but the three metrics
+# below use the more exact terminology.
+
+CLAIM_TRIGGER_RE = re.compile(
+    r"\bsimilar to\b|\bconsistent with\b|\bunlike\b|\bcompared to\b|\bcompares to\b|"
+    r"\bas (?:in|with)\b|\bpreviously\b|\bprior\b|\blast time\b|\bhistorical(?:ly)?\b|"
+    r"\bbefore\b|\bagain\b|\brecurring\b|\bsame pattern\b|\bsame as\b|\becho(?:es|ed)?\b|"
+    r"\bmirrors?\b|\bparallel(?:s)?\b|\breminiscent\b|"
+    r"\b(?:19|20)\d{2}\b|"  # a 4-digit year
+    r"\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\b",
+    re.IGNORECASE,
+)
+CITATION_MARKER_RE = re.compile(r"\[S\d+\]")
+SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+")
+
+
+def split_sentences(text: str) -> List[str]:
+    return [s.strip() for s in SENTENCE_SPLIT_RE.split(text) if s.strip()]
+
+
+def score_citation_precision(num_citations: int, num_unverified: int) -> float:
+    """Of the citations the model actually produced, what fraction did
+    `CitationVerifier` confirm are a real substring of their cited
+    source? 1.0 if it produced no citations (nothing to be wrong about)."""
+    if num_citations == 0:
+        return 1.0
+    return max(0.0, num_citations - num_unverified) / num_citations
+
+
+def score_claim_grounding(explanation_text: str) -> dict:
+    """Heuristic grounding-completeness check: of the sentences that
+    plausibly make a historical/comparative claim (regex trigger match --
+    'similar to', a bare year, a month name, etc.), what fraction actually
+    carry an inline [Sx] citation marker? This is a deterministic,
+    reproducible proxy, not a semantic claim detector -- a sentence can
+    trip the regex without truly needing a citation, or make an uncited
+    claim the regex misses. Returns citation_coverage (completeness) and
+    unsupported_claim_rate (its complement) together since they're
+    computed from the same sentence split."""
+    sentences = split_sentences(explanation_text)
+    claim_sentences = [s for s in sentences if CLAIM_TRIGGER_RE.search(s)]
+
+    if not claim_sentences:
+        return {"citation_coverage": 1.0, "unsupported_claim_rate": 0.0, "num_claim_sentences": 0}
+
+    cited = [s for s in claim_sentences if CITATION_MARKER_RE.search(s)]
+    coverage = len(cited) / len(claim_sentences)
+    return {
+        "citation_coverage": coverage,
+        "unsupported_claim_rate": 1.0 - coverage,
+        "num_claim_sentences": len(claim_sentences),
+    }
