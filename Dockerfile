@@ -9,6 +9,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
+# CPU-only torch first -- the default PyPI Linux wheel bundles full CUDA
+# support (multiple GB of nvidia-*-cu12 packages) that this container,
+# with no GPU, never uses. Installing the CPU build up front satisfies
+# sentence-transformers' torch requirement below without pip pulling in
+# the CUDA variant.
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+
 COPY requirements.txt pyproject.toml ./
 RUN pip install --no-cache-dir -r requirements.txt
 

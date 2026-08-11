@@ -8,6 +8,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 USER airflow
 
+# CPU-only torch first -- see Dockerfile for why (avoids pulling multiple
+# GB of unused nvidia-*-cu12 CUDA packages via sentence-transformers).
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+
 COPY requirements.txt pyproject.toml ./
 RUN pip install --no-cache-dir -r requirements.txt
 
