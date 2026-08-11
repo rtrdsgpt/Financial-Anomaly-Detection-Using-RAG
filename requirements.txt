@@ -26,4 +26,7 @@ uvicorn[standard]>=0.29.0
 mlflow>=2.10.0
 
 # MCP tool server
-mcp>=1.0.0
+# Pinned below 2.0 -- mcp 2.0.0 restructured FastMCP into a different
+# server API (mcp.server.mcpserver.MCPServer); src/serving/mcp_server.py
+# is written against the stable 1.x mcp.server.fastmcp.FastMCP API.
+mcp>=1.0.0,<2.0.0
