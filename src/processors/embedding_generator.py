@@ -5,7 +5,7 @@ Embedding generation processor implementing Strategy pattern.
 import pandas as pd
 import numpy as np
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Optional
+from typing import List, Optional
 import os
 import warnings
 

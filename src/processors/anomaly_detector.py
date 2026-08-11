@@ -3,10 +3,8 @@ Anomaly detection processor implementing Strategy pattern.
 """
 
 import pandas as pd
-import numpy as np
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Tuple, Optional
-from datetime import datetime
+from typing import Dict, Any, Optional
 
 from core.base import BaseProcessor
 from core.interfaces import IAnomalyDetector

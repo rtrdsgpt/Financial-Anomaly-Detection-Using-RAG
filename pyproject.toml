@@ -23,6 +23,14 @@ line-length = 120
 # purpose.
 select = ["E4", "E7", "E9", "F"]
 
+[tool.ruff.lint.per-file-ignores]
+# Package __init__.py files deliberately re-export their submodule's
+# public names via `import *` (a pattern predating this fork) -- ruff
+# can't verify there's no name collision across a wildcard import, but
+# there isn't one here; not worth rewriting every module's public API
+# into explicit __all__ lists for this project's size.
+"__init__.py" = ["F403"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = [

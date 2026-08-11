@@ -4,20 +4,19 @@ Main quantitative analysis pipeline implementing Template Method pattern.
 
 import pandas as pd
 import numpy as np
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, List
 from datetime import datetime
 import logging
 
 from core.base import BaseAnalysisPipeline
-from core.interfaces import IProgressObserver, IDataRepository
 from core.exceptions import AnalysisError
 
 from processors.data_loader import DataLoader, YFinanceDataStrategy
-from processors.anomaly_detector import AnomalyDetector, ZScoreStrategy, IsolationForestStrategy
-from processors.news_retriever import NewsRetriever, NewsRetrieverFactory
-from processors.embedding_generator import EmbeddingGenerator, EmbeddingGeneratorFactory
-from processors.similarity_analyzer import SimilarityAnalyzer, FAISSStrategy, CosineSimilarityStrategy
-from processors.ai_explainer import AIExplainer, AIExplainerFactory
+from processors.anomaly_detector import AnomalyDetector, ZScoreStrategy
+from processors.news_retriever import NewsRetrieverFactory
+from processors.embedding_generator import EmbeddingGeneratorFactory
+from processors.similarity_analyzer import SimilarityAnalyzer, FAISSStrategy
+from processors.ai_explainer import AIExplainerFactory
 from processors.chunking import ChunkerFactory
 from processors.vector_store import VectorStoreFactory
 from processors.reranker import RerankerFactory

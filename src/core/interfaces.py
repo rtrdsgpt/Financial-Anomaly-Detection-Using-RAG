@@ -3,7 +3,7 @@ Interfaces and abstract base classes following SOLID principles.
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 import pandas as pd
 import numpy as np
 

@@ -5,7 +5,7 @@ Similarity analysis processor implementing Strategy pattern.
 import pandas as pd
 import numpy as np
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Tuple, Optional
+from typing import Dict, Any, Tuple, Optional
 import faiss
 
 from core.base import BaseProcessor
@@ -179,7 +179,7 @@ class SimilarityAnalyzer(BaseProcessor, ISimilarityAnalyzer):
             index = self.strategy.create_index(embeddings)
             
             self.notify_progress("similarity_analysis", 50.0, "Similarity index created")
-            self.log_info(f"Similarity index created successfully")
+            self.log_info("Similarity index created successfully")
             
             return index
             

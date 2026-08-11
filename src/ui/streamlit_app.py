@@ -5,18 +5,14 @@ OOP-based Streamlit application implementing design patterns.
 import streamlit as st
 import pandas as pd
 import numpy as np
-from typing import Dict, Any, Optional, List
-from datetime import datetime, timedelta
+from typing import Dict, Any
+from datetime import datetime
 import logging
 
 from core.exceptions import AnalysisError
-from pipeline.quantitative_pipeline import QuantitativeAnalysisPipeline
 from pipeline.pipeline_factory import PipelineDirector
-from pipeline.progress_observer import StreamlitProgressObserver
 from ui.ui_components import (
-    UIComponentManager, UIComponentFactory,
-    DataDisplayComponent, EventsDisplayComponent, ChartComponent,
-    AIExplanationComponent, SimilarityAnalysisComponent, DownloadComponent
+    UIComponentManager, UIComponentFactory
 )
 
 class StreamlitApp:

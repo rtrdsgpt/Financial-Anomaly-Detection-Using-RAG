@@ -18,10 +18,9 @@ np.seterr(over='ignore', under='ignore')
 # Add current directory to path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from core.exceptions import AnalysisError
-from pipeline.quantitative_pipeline import QuantitativeAnalysisPipeline
-from pipeline.pipeline_factory import PipelineDirector, PipelineFactory
-from pipeline.progress_observer import ConsoleProgressObserver
+from core.exceptions import AnalysisError  # noqa: E402
+from pipeline.quantitative_pipeline import QuantitativeAnalysisPipeline  # noqa: E402
+from pipeline.pipeline_factory import PipelineFactory  # noqa: E402
 
 class QuantitativeAnalysisApp:
     """Main application class implementing OOP principles"""
@@ -148,26 +147,26 @@ class QuantitativeAnalysisApp:
                 return
             
             # Configuration
-            print(f"\nConfiguration:")
+            print("\nConfiguration:")
             print(f"  Ticker: {self.config.get('ticker', 'N/A')}")
             print(f"  Benchmark: {self.config.get('benchmark', 'N/A')}")
             print(f"  Date Range: {self.config.get('start_date', 'N/A')} to {self.config.get('end_date', 'N/A')}")
             
             # Event summary
             if 'event_summary' in self.results:
-                print(f"\nEvent Detection:")
+                print("\nEvent Detection:")
                 for key, value in self.results['event_summary'].items():
                     print(f"  {key}: {value}")
             
             # Similarity analysis
             if 'similarity_analysis' in self.results:
-                print(f"\nSimilarity Analysis:")
+                print("\nSimilarity Analysis:")
                 for key, value in self.results['similarity_analysis'].items():
                     print(f"  {key}: {value}")
             
             # Latest explanation
             if 'latest_explanation' in self.results:
-                print(f"\nLatest Event Explanation:")
+                print("\nLatest Event Explanation:")
                 print("-" * 40)
                 print(self.results['latest_explanation'])
                 print("-" * 40)
@@ -211,7 +210,7 @@ def main():
         app = QuantitativeAnalysisApp()
         
         # Run analysis
-        results = app.run_analysis()
+        app.run_analysis()
         
         # Print summary
         app.print_summary()

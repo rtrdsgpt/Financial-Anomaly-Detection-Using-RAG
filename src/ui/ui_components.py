@@ -4,16 +4,12 @@ UI components implementing OOP principles and design patterns.
 
 import streamlit as st
 import pandas as pd
-import numpy as np
-import plotly.express as px
 import plotly.graph_objects as go
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Dict, Any, Optional
 from abc import ABC, abstractmethod
 from datetime import datetime
 import logging
 
-from core.interfaces import IProgressObserver
-from core.exceptions import AnalysisError
 
 class UIComponent(ABC):
     """Base class for UI components"""

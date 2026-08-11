@@ -3,10 +3,8 @@ Base classes implementing common functionality and design patterns.
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 import pandas as pd
-import numpy as np
-from datetime import datetime
 import logging
 
 from .interfaces import IProgressObserver, IDataRepository

@@ -3,12 +3,11 @@ Progress observer implementing Observer pattern for UI updates.
 """
 
 import streamlit as st
-from typing import Any, Dict, List
+from typing import List
 from datetime import datetime
 import logging
 
 from core.interfaces import IProgressObserver
-from core.exceptions import AnalysisError
 
 class StreamlitProgressObserver(IProgressObserver):
     """Observer for Streamlit UI progress updates"""

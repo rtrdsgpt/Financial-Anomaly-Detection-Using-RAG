@@ -3,21 +3,12 @@ OOP-based Streamlit application implementing design patterns.
 """
 
 import streamlit as st
-import pandas as pd
-import numpy as np
-from typing import Dict, Any, Optional
-from datetime import datetime, timedelta
-import logging
 import sys
 import os
 
 # Add current directory to path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from core.exceptions import AnalysisError
-from pipeline.quantitative_pipeline import QuantitativeAnalysisPipeline
-from pipeline.pipeline_factory import PipelineDirector
-from pipeline.progress_observer import StreamlitProgressObserver
 from ui.streamlit_app import StreamlitApp
 
 def main():

@@ -9,7 +9,7 @@ stage of a real RAG pipeline.
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import List
 
 from core.exceptions import AnalysisError
 from processors.chunking import Chunk

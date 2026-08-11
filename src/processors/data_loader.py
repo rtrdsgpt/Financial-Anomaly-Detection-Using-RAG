@@ -5,8 +5,7 @@ Data loading processor implementing Strategy pattern.
 import pandas as pd
 import numpy as np
 import yfinance as yf
-from typing import Dict, Any, Optional
-from datetime import datetime, timedelta
+from typing import Dict, Optional
 import warnings
 from abc import ABC, abstractmethod
 

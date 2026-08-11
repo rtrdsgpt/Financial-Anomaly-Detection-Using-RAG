@@ -5,11 +5,10 @@ News retrieval processor implementing Strategy pattern and Factory pattern.
 import pandas as pd
 import requests
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Optional
+from typing import Optional
 from datetime import timedelta, datetime
-import time
 
-from core.base import BaseProcessor, BaseAPIClient
+from core.base import BaseProcessor
 from core.interfaces import INewsRetriever
 from core.exceptions import NewsRetrievalError, APIClientError
 
@@ -79,7 +78,7 @@ class FinnhubNewsStrategy(NewsRetrievalStrategy):
             params = {'symbol': 'AAPL', 'token': self.api_key}
             response = requests.get(url, params=params, timeout=5)
             return response.status_code == 200
-        except:
+        except Exception:
             return False
 
 class YahooNewsStrategy(NewsRetrievalStrategy):
@@ -125,7 +124,7 @@ class YahooNewsStrategy(NewsRetrievalStrategy):
             # Test with a simple request
             news.get_yf_rss('AAPL')
             return True
-        except:
+        except Exception:
             return False
 
 class NewsRetriever(BaseProcessor, INewsRetriever):

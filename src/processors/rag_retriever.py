@@ -8,9 +8,8 @@ grounded citations possible: a retrieved candidate now carries the exact
 source text a claim can be checked against, not just a similar event row.
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional
-import numpy as np
+from dataclasses import dataclass
+from typing import Any, Callable, List, Optional
 import pandas as pd
 
 from core.base import BaseProcessor

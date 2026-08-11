@@ -8,7 +8,7 @@ strategies satisfy the existing `SimilarityStrategy` interface, so they are
 drop-in replacements anywhere a `SimilarityAnalyzer` is used.
 """
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 
