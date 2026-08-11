@@ -170,3 +170,102 @@ surfaced:
   `__init__.py` in `pyproject.toml`.
 - ~75 genuinely unused imports, auto-fixed via `ruff check --fix` and
   re-verified against the full test suite afterward.
+
+---
+
+## 7. Making the eval CV-defensible: real data, real baselines, real numbers
+
+The synthetic eval set (section on RAG design decisions above) is fine for
+exercising the pipeline, but it isn't evidence of anything for a resume --
+13 hand-written scenarios with hand-written key facts prove the code runs,
+not that the RAG upgrade helps. The user's own priority-ordered list for
+what to fix before this goes on a CV: (1) actually run an eval, (2) add
+baseline comparisons (LLM-only / LLM+legacy-retrieval / RAG / RAG+reranker),
+(3) real financial events (50-100+), (4) retrieval metrics (Recall@5, MRR@5,
+reranker lift) measured separately from generation, (5) grounding metrics
+(citation precision, unsupported-claim rate, citation coverage), (6) one
+real ablation, (7, deferred) SEC filings/earnings transcripts as a second
+retrieval source.
+
+**Ground truth for real events, decided up front**: no hand-written or
+LLM-written reference explanation for the 112 real events. Writing 100
+references by hand isn't realistic, and an LLM-written reference would
+make the embedding-similarity-to-reference metric partly circular (grading
+one language model's explanation against another's explanation of the same
+event). `key_facts` are instead deterministically extracted from each
+event's own real headline (regex for percentages/dollar amounts + a fixed
+action-word vocabulary) -- `build_real_eval_set.py`.
+
+**Two false starts on historical news, both instructive.** First assumed
+Yahoo's free RSS feed (already used elsewhere in this project) would work
+for historical dates -- it doesn't; direct testing confirmed it only
+returns news from roughly the last few days, nothing for a 2023 date.
+Second assumed Finnhub's `/company-news` free tier, which does accept
+`from`/`to` date parameters, would cover multiple years -- also wrong.
+A raw request to the actual endpoint for 2023/2024 date ranges came back
+`200 OK` with zero articles, while a recent window returned 250. Binary-
+searched the real cutoff by testing windows 0-12 months back: real data at
+11.5 months, empty at exactly 12 months. The lesson isn't "Finnhub is
+broken" -- the API honestly answers whatever's asked of it with `200` and
+an empty array either way, so *accepting a parameter* is not the same as
+*having data for it*, and the only way to know the difference was to
+actually query it, not read documentation or assume. Real event sourcing
+was rebuilt around a ~1-year window ending "now" instead of the originally
+planned multi-year 2021-2024 range, and still produced 112 events (target
+was 50-100) across 10 tickers spanning tech/auto/pharma/energy/financials/
+media/industrials -- because a year of real anomaly-adjacent news across
+10 tickers turned out to be plenty, once the actual constraint was known.
+
+**Retrieval metrics needed an honest relevance proxy.** There's no human
+relevance judgment for 112 real events, and fabricating one would violate
+the whole point of this exercise. Went with the simplest defensible
+definition: a candidate chunk is "relevant" if it's from a historical event
+for the *same ticker* with the *same `Event_Type`* as the query, excluding
+the query itself -- one sentence to explain, fully deterministic,
+reproducible from the code. Real result:  Recall@5 dropped slightly with
+reranking (0.421 -> 0.405, lift -0.017) while MRR@5 improved slightly
+(0.666 -> 0.686, lift +0.020) -- a small, mixed effect, not the clean
+"reranker improved relevance by X%" story that would look best on a CV.
+Reported as measured. 106/112 events were scored; 6 were excluded (not
+scored as zero) because the proxy found no relevant docs for them at all --
+recall/MRR are undefined without a relevant set, so silently scoring those
+as 0 would have deflated the real number for a reason that has nothing to
+do with retrieval quality.
+
+**The default Groq model had been deprecated without anyone noticing.**
+The very first real (non-mocked) Groq call in this project's history
+returned `404 model_not_found` for `meta-llama/llama-4-scout-17b-16e-
+instruct` -- the hardcoded default since the original team project. Queried
+`client.models.list()` against the real account to see what's actually
+available rather than guessing a replacement. Tried `openai/gpt-oss-120b`
+first (seemed like the natural upgrade); it cannot fully disable reasoning
+on Groq (`reasoning_effort` only goes down to `'low'`, no `'none'`), and on
+a live call it spent its entire `max_completion_tokens` budget on hidden
+reasoning and returned an empty response (`json_validate_failed`) --
+reproduced directly, not inferred from docs. `qwen/qwen3.6-27b` does
+support `reasoning_effort='none'` on Groq, confirmed with a live JSON-mode
+call before wiring it in everywhere as the new default, with
+`reasoning_effort="none"` set explicitly on every call site.
+
+**A single API key wasn't enough to finish a ~450-call run.** The first
+attempt at the full 112-event x 4-config baseline comparison (448 base
+Groq calls, more with retries) visibly stalled: after ~55 minutes, the
+Groq console showed only ~150 requests against that key, and CPU time on
+the process was under 10 seconds -- almost all wall-clock time was retry
+backoff, not real work. Rather than working around this ad hoc, ported the
+key-rotation pattern already proven in the Exporter Crawl project
+(`build_key_rotator` / `HardRateLimitError` there): `GROQ_API_KEY` now
+accepts a comma-separated list, and `RotatingGroqClient`
+(`processors/groq_key_rotation.py`) transparently rotates to the next key
+and retries the same call when the current one hits a rate limit, rather
+than the functional `judge_fn`/`next_judge_fn` closures Exporter Crawl
+uses -- adapted to a client wrapper since this project's Strategy classes
+call `self.client.chat.completions.create(...)` directly. A single key
+still behaves exactly as before; rotation is a no-op superset.
+
+**Status at the point this log entry was written**: real event sourcing
+and retrieval metrics are complete and their numbers are in the README.
+The full baseline comparison (`evaluate_baselines.py` across all 112
+events x 4 configs) was still running/pending a rerun with the rotating
+client -- its numbers, once produced by an actual run, go in the README's
+Results section the same way retrieval's did, not before.

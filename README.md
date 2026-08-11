@@ -27,18 +27,52 @@ the original. This repo carries no shared git history with it.
 
 ## Results
 
-No eval numbers are shown here on purpose -- `src/experiments/evaluate.py`
-is real and runnable (dual metric: deterministic fact-overlap/citation-
-coverage/embedding-similarity, plus an LLM-judge rubric), but this README
-does not report scores that weren't actually produced by running it against
-a live Groq API key. Run it yourself:
+Two eval sets, two different jobs:
+
+- **`src/experiments/eval_set.json`** -- 13 hand-written, explicitly-labeled-
+  synthetic scenarios with a reference explanation, for the dual-metric
+  harness (`evaluate.py`): deterministic (fact-overlap/citation-coverage/
+  embedding-similarity-to-reference) + an LLM-judge rubric.
+- **`src/experiments/real_eval_set.json`** -- 112 REAL market anomalies
+  (10 tickers across tech/auto/pharma/energy/financials/media/industrials,
+  via `yfinance`) with REAL contemporaneous news (Finnhub `company-news`,
+  historical date-ranged -- see `src/experiments/build_real_eval_set.py`).
+  No hand-written or LLM-written reference explanation for these (writing
+  112 references by hand isn't feasible, and an LLM-written one would make
+  embedding-similarity partly circular) -- `key_facts` are instead
+  deterministically extracted from each event's own real headline.
+
+**Retrieval quality, real events, no LLM calls** (`retrieval_metrics.py` --
+relevance proxy: same ticker + same `Event_Type` as the query, excluding the
+query itself; 106/112 events scored, 6 excluded for having zero relevant
+docs under that proxy):
+
+| Metric | Pre-rerank | Post-rerank | Lift |
+|---|---|---|---|
+| Recall@5 | 0.421 | 0.405 | **-0.017** |
+| MRR@5 | 0.666 | 0.686 | **+0.020** |
+
+Small and mixed, not a clean win: the cross-encoder reranker doesn't pull
+more relevant history into the top 5 (recall is slightly *worse*), but when
+a relevant item is already in the top 5 it tends to rank it higher (MRR
+improves). Reported as measured, not rounded or spun to look better.
+
+**Baseline comparison** (`evaluate_baselines.py` -- LLM-only vs. LLM +
+legacy whole-event retrieval vs. RAG vs. RAG + reranker, same real events,
+same metrics) and the **synthetic dual-metric eval** (`evaluate.py`) are
+both real and runnable against a live `GROQ_API_KEY`:
 
 ```bash
-GROQ_API_KEY=... venv/bin/python3 src/experiments/evaluate.py
+venv/bin/python3 src/experiments/retrieval_metrics.py     # no API key needed
+venv/bin/python3 src/experiments/evaluate_baselines.py    # ~450 Groq calls
+venv/bin/python3 src/experiments/evaluate.py               # synthetic set
 ```
 
-...and browse results in `results/eval/eval_report_*.json`, or
-`venv/bin/mlflow ui` for the tracked runs.
+Reports land in `results/eval/*.json`; `venv/bin/mlflow ui` for tracked
+`evaluate.py` runs. As with retrieval, any numbers added here later will be
+exactly what a real run produced -- see [`log.md`](log.md) for the full
+methodology and its limitations (relevance proxy, no ground-truth prose for
+real events, sample size, Finnhub free tier's ~1-year news coverage).
 
 ## Architecture
 
@@ -180,6 +214,11 @@ Deliberately bounded, on purpose:
   hosted MLflow server, no Celery/Redis/worker fleet. One daily DAG doesn't
   need a worker fleet.
 - **No fabricated eval numbers, ever** -- see [Results](#results).
+- **News headlines only, not SEC filings/earnings transcripts** -- a second
+  retrieval source (10-K/10-Q excerpts, earnings call transcripts) would be
+  a genuinely interesting `ChunkingStrategy`/`NewsRetrievalStrategy`
+  addition, deliberately deferred rather than started in the same pass as
+  the eval work above.
 
 ## License
 
