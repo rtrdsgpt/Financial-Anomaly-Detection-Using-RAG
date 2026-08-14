@@ -10,7 +10,7 @@ historical news: chunk -> embed -> vector-search -> rerank -> generate with
 inline citations -> deterministically verify each citation against its
 source text before trusting it.
 
-Upgraded, independently-maintained fork of an MA5750 (Object-Oriented
+Upgraded, independently-maintained fork of an MA5741 (Object-Oriented
 Programming) course project -- see
 [`rtrdsgpt/F.A.I.L._OOPS`](https://github.com/rtrdsgpt/F.A.I.L._OOPS) for
 the original. This repo carries no shared git history with it.
